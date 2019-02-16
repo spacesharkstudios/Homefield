@@ -9,6 +9,8 @@ public class playerController : MonoBehaviour
     public float moveSpeed;
     private bool facingRight = true;
     public float VI;
+    private Vector3 m_velocity = Vector3.zero;
+    public float gravity = .5f;
 
     private void Start()
     {
@@ -21,8 +23,9 @@ public class playerController : MonoBehaviour
     private void FixedUpdate()
     {
         float horizontalMovement = Input.GetAxis("Horizontal");
-        Vector2 movement = new Vector2(horizontalMovement, 0);
-        rb2d.AddForce(movement * moveSpeed);
+        Vector2 movement = new Vector2(horizontalMovement * moveSpeed, -(rb2d.gravityScale) * gravity);
+        //rb2d.AddForce(movement * moveSpeed);
+        rb2d.velocity = movement;
         if (horizontalMovement == -1)
         {
             facingRight = false;
@@ -38,14 +41,6 @@ public class playerController : MonoBehaviour
         else
         {
             spriteRenderer.flipX = false;
-        }
-        if (horizontalMovement == 0 && facingRight)
-        {
-            movement.Set(-2 * moveSpeed, 0);
-        }
-        if (horizontalMovement == 0 && !facingRight)
-        {
-            movement.Set(2 * moveSpeed, 0);
         }
     }
 }
