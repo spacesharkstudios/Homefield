@@ -10,7 +10,7 @@ public class playerController : MonoBehaviour
     private bool facingRight = true;
     public float VI;
     private Vector3 m_velocity = Vector3.zero;
-    public float gravity = .5f;
+    public float gravity = 0f;
 
     private void Start()
     {
@@ -23,7 +23,7 @@ public class playerController : MonoBehaviour
     private void FixedUpdate()
     {
         float horizontalMovement = Input.GetAxis("Horizontal");
-        Vector2 movement = new Vector2(horizontalMovement * moveSpeed, -(rb2d.gravityScale) * gravity);
+        Vector2 movement = new Vector2(horizontalMovement * moveSpeed, 0);
         //rb2d.AddForce(movement * moveSpeed);
         rb2d.velocity = movement;
         if (horizontalMovement == -1)
