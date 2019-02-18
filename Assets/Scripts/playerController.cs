@@ -4,42 +4,39 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
-    private Rigidbody2D rb2d;
-    private SpriteRenderer spriteRenderer;
-    public float moveSpeed;
-    private bool facingRight = true;
-    public float VI;
-    private Vector3 m_velocity = Vector3.zero;
-    public float gravity = 0f;
+    private Rigidbody2D rb2d;              // Create a Rigidbody2D reference variable called rb2d
+    private SpriteRenderer spriteRenderer; // Create a SpriteRenderer reference variable called spriteRenderer
+    private Animator animator;             // Create an Animator reference variable called animator
+    public float moveSpeed = 10f;          // Create a public float called moveSpeed
+    private bool facingRight = true;       // Create a boolean value called facingRight and set it to true
 
     private void Start()
     {
-        rb2d = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        moveSpeed = 10;
-        VI = 3;
+        rb2d = GetComponent<Rigidbody2D>();              // Get the players Rigidbody2D and store it in rb2d
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Get the players SpriteRenderer and store it in spriteRenderer
+        moveSpeed = 150f;
     }
 
     private void FixedUpdate()
     {
-        float horizontalMovement = Input.GetAxis("Horizontal");
-        Vector2 movement = new Vector2(horizontalMovement * moveSpeed, 0);
-        //rb2d.AddForce(movement * moveSpeed);
+        // Get keyboard input
+        float horizontalMovement = Input.GetAxis("Horizontal"); // "A" returns a -1 and "D" returns a 1
+
+        // Create a Vector2 object to add force to the player
+        Vector2 movement = new Vector2(horizontalMovement * moveSpeed * Time.fixedDeltaTime, rb2d.velocity.y);
+
+        // Add the new Vector2 to the players velocity
         rb2d.velocity = movement;
-        if (horizontalMovement == -1)
+
+        // Check to see what direction the player is facing
+        if (horizontalMovement < 0) // Check if the player is moving left
         {
             facingRight = false;
-        }
-        if (horizontalMovement == 1)
-        {
-            facingRight = true;
-        }
-        if (!facingRight)
-        {
             spriteRenderer.flipX = true;
         }
-        else
+        if (horizontalMovement > 0) // Check if the player is moving right
         {
+            facingRight = true;
             spriteRenderer.flipX = false;
         }
     }
