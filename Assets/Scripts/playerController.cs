@@ -9,12 +9,13 @@ public class playerController : MonoBehaviour
     private Animator animator;             // Create an Animator reference variable called animator
     public float moveSpeed = 10f;          // Create a public float called moveSpeed
     private bool facingRight = true;       // Create a boolean value called facingRight and set it to true
+    public float jumpForce = 100f;
 
     private void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();              // Get the players Rigidbody2D and store it in rb2d
         spriteRenderer = GetComponent<SpriteRenderer>(); // Get the players SpriteRenderer and store it in spriteRenderer
-        moveSpeed = 150f;
+        moveSpeed = 300f;
     }
 
     private void FixedUpdate()
@@ -24,6 +25,7 @@ public class playerController : MonoBehaviour
 
         // Create a Vector2 object to add force to the player
         Vector2 movement = new Vector2(horizontalMovement * moveSpeed * Time.fixedDeltaTime, rb2d.velocity.y);
+        // Time.fixedDeltaTime is used to make the game run similarly on all systems reguardless of framerate
 
         // Add the new Vector2 to the players velocity
         rb2d.velocity = movement;
@@ -38,6 +40,13 @@ public class playerController : MonoBehaviour
         {
             facingRight = true;
             spriteRenderer.flipX = false;
+        }
+
+        if (Input.GetKey(KeyCode.Space) && rb2d.velocity.y == 0)
+        {
+            Vector2 jump = new Vector2(rb2d.velocity.x, jumpForce);
+            rb2d.AddForce(jump);
+            Debug.Log("You hit the jump button, asshole");
         }
     }
 }
