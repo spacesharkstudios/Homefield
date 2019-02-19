@@ -6,16 +6,20 @@ public class playerController : MonoBehaviour
 {
     private Rigidbody2D rb2d;              // Create a Rigidbody2D reference variable called rb2d
     private SpriteRenderer spriteRenderer; // Create a SpriteRenderer reference variable called spriteRenderer
-    private Animator animator;             // Create an Animator reference variable called animator
+    private Animator animator;              // Create an Animator reference variable called animator
     public float moveSpeed = 10f;          // Create a public float called moveSpeed
     private bool facingRight = true;       // Create a boolean value called facingRight and set it to true
-    public float jumpForce = 100f;
+    public float jumpForce = 300f;         // Create a float value for jump force
+    private bool isLaunched;
+    public float movementSpeed;
 
     private void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();              // Get the players Rigidbody2D and store it in rb2d
         spriteRenderer = GetComponent<SpriteRenderer>(); // Get the players SpriteRenderer and store it in spriteRenderer
+        animator = GetComponent<Animator>();
         moveSpeed = 300f;
+        isLaunched = false;
     }
 
     private void FixedUpdate()
@@ -42,11 +46,29 @@ public class playerController : MonoBehaviour
             spriteRenderer.flipX = false;
         }
 
-        if (Input.GetKey(KeyCode.Space) && rb2d.velocity.y == 0)
+        if (Input.GetKey(KeyCode.Space) && rb2d.velocity.y == 0 && !isLaunched)
         {
             Vector2 jump = new Vector2(rb2d.velocity.x, jumpForce);
             rb2d.AddForce(jump);
             Debug.Log("You hit the jump button, asshole");
         }
+
+        if (rb2d.velocity.x > 0 || rb2d.velocity.x < 0)
+        {
+            animator.SetBool("isRunning", true);
+        }
+        else if (rb2d.velocity.x == 0)
+        {
+            animator.SetBool("isRunning", false);
+        }
+        
+    }
+
+    public void Launch(Rigidbody2D rb2d2)
+    {
+        isLaunched = true;
+        Vector2 launch = new Vector2(100, 300);
+        rb2d2.AddForce(launch);
+
     }
 }
