@@ -50,7 +50,16 @@ public class playerController : MonoBehaviour
         {
             Vector2 jump = new Vector2(rb2d.velocity.x, jumpForce);
             rb2d.AddForce(jump);
+            //animator.SetBool("isJumping", true);
             Debug.Log("You hit the jump button, asshole");
+        }
+        if (rb2d.velocity.y == 0)
+        {
+            animator.SetBool("isJumping", false);
+        }
+        if (rb2d.velocity.y > 0 || rb2d.velocity.y < 0)
+        {
+            animator.SetBool("isJumping", true);
         }
 
         if (rb2d.velocity.x > 0 || rb2d.velocity.x < 0)
