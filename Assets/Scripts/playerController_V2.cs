@@ -9,9 +9,12 @@ public class playerController_V2 : MonoBehaviour
     private Animator animator;
     private SpriteRenderer spriteRenderer;
     private bool isFacingRight;
+    private float drag;
     public bool grounded;
     const float groundedRadius = 0.2f;
     public float gravityScale;
+    public float maxAirSpeed = 100f;
+    public float maxGroundSpeed;
     [SerializeField] public float movementSpeed = 400f;
     [SerializeField] public float jumpForce = 150f;
     [SerializeField] public LayerMask whatIsGround;
@@ -27,6 +30,7 @@ public class playerController_V2 : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         gravityScale = rb2d.gravityScale;
+        drag = rb2d.drag;
 
         if (onLandEvent == null)
             onLandEvent = new UnityEvent();
@@ -57,13 +61,26 @@ public class playerController_V2 : MonoBehaviour
     {
         if (grounded && !launched)
         {
+            animator.SetBool("isJumping", false);
+
             rb2d.velocity = new Vector2(move * movementSpeed * Time.fixedDeltaTime, rb2d.velocity.y);
 
+            if (Mathf.Abs(rb2d.velocity.x) > 0)
+                animator.SetBool("isRunning", true);
+            if (rb2d.velocity.x == 0)
+                animator.SetBool("isRunning", false);
         }
         if (!grounded && !launched)
         {
             //rb2d.AddForce(new Vector2(move * movementSpeed * airMove * Time.fixedDeltaTime, 0));
-            //rb2d.velocity = new Vector2((move * movementSpeed * airMove * Time.fixedDeltaTime) + (rb2d.velocity.x * Time.fixedDeltaTime * .5f), rb2d.velocity.y);
+            if (Mathf.Abs(rb2d.velocity.x) <= maxAirSpeed)
+            {
+                rb2d.AddForce(new Vector2(move * (movementSpeed * 2f) * Time.fixedDeltaTime, 0));
+            }
+            else
+            {
+                rb2d.velocity = new Vector2(maxAirSpeed * (Mathf.Abs(rb2d.velocity.x) / rb2d.velocity.x), rb2d.velocity.y);
+            }
             if(rb2d.velocity.y < 0)
             {
                 rb2d.gravityScale = gravityScale * 2f;
@@ -73,6 +90,7 @@ public class playerController_V2 : MonoBehaviour
                 rb2d.gravityScale = gravityScale;
             }
 
+            animator.SetBool("isJumping", true);
         }
         if(jump && grounded)
         {
