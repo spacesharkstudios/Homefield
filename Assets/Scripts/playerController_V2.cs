@@ -51,7 +51,7 @@ public class playerController_V2 : MonoBehaviour
             }
         }
 
-        Move(Input.GetAxis("Horizontal"), .75f, false, Input.GetKey(KeyCode.Space));
+        Move(Input.GetAxis("Horizontal"), .75f, false, Input.GetKey(KeyCode.Space), Input.GetKey(KeyCode.P));
     }
 
 
@@ -59,10 +59,10 @@ public class playerController_V2 : MonoBehaviour
     // parameters: move, air move, launched, jump
     // move is a value between -1 and 1, deturmines the direction the player will move
     // airMove is the amound the acceleration ratio of in air acceleration over ground acceleration
-    private void Move(float move, float airMove, bool launched, bool jump)
+    private void Move(float move, float airMove, bool launched, bool jump, bool attacking)
     {
         // check if the player is on the ground and not launched
-        if (grounded && !launched)
+        if (grounded && !launched && !attacking)
         {
             // tell the animator that the player is not jumping
             animator.SetBool("isJumping", false);
@@ -79,7 +79,7 @@ public class playerController_V2 : MonoBehaviour
         }
 
         // check if the player is not grounded and not launched
-        if (!grounded && !launched)
+        if (!grounded && !launched && !attacking)
         {
             // check if the player is trying to move faster than the maximum air speed
 
@@ -112,9 +112,20 @@ public class playerController_V2 : MonoBehaviour
         }
 
         // let the player jump if they are grounded and they press the jump key
-        if(jump && grounded)
+        if(jump && grounded & !attacking)
         {
             rb2d.AddForce(new Vector2(0, jumpForce)); // add a vertical force with no horizontal force
+        }
+
+        if (attacking && grounded)
+        {
+            rb2d.velocity = new Vector2(0, 0);
+            animator.SetBool("attacking", true);
+        }
+
+        if (!attacking)
+        {
+            animator.SetBool("attacking", false);
         }
 
         // set isFacingRight based on if the player's x velocity is positive or negative
