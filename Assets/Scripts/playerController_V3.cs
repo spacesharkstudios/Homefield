@@ -65,6 +65,13 @@ public class playerController_V3 : MonoBehaviour
         else
             hitStun = false;
 
+        if (hitStun)
+        {
+            // set the hitsutn animation
+            rb2d.velocity = new Vector2(0, 0);
+            hitStunFrames--;
+        }
+
         if (grounded && !launched && !attacking && !hitStun)
         {
             rb2d.velocity = new Vector2(move * moveSpeed * Time.fixedDeltaTime, 0);
