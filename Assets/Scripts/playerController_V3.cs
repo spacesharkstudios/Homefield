@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,24 +12,25 @@ public class playerController_V3 : MonoBehaviour
     public bool facingRight;
     public bool grounded;
     const float groundedRadius = 0.1f;
-    public float gravityScale;
+    public float gravityScale = 1;
     public float move;
+    public GameObject neutralLight;
+    private GameObject attackObject;
+    private float deleteTime = -1;
     [SerializeField] public float maxAirSpeed = 100f;
     [SerializeField] public float moveSpeed = 400f;
     [SerializeField] public float jumpForce = 300f;
     [SerializeField] LayerMask whatIsGround;
     [SerializeField] Transform groundCheck;
-    [SerializeField] Transform ceilingCheck;
+    [SerializeField] Transform cleetusCenter;
 
     public UnityEvent onLandEvent;
 
     // Start is called before the first frame update
     void Awake()
     {
+        rb2d.gravityScale = 1;
         gravityScale = rb2d.gravityScale;
-
-        if (onLandEvent == null)
-            onLandEvent = new UnityEvent();
     }
 
     // Update is called once per frame
@@ -54,7 +56,7 @@ public class playerController_V3 : MonoBehaviour
 
         move = Input.GetAxis("Horizontal");
 
-        Move(move, 0, grounded, Input.GetKey(KeyCode.P), false, Input.GetKey(KeyCode.Space));
+        Move(move, 0, grounded, Input.GetKeyDown(KeyCode.P), false, Input.GetKeyDown(KeyCode.Space));
     }
 
     private void Move(float move, int hitStunFrames, bool grounded, bool attacking, bool launched, bool jump)
@@ -72,7 +74,7 @@ public class playerController_V3 : MonoBehaviour
             hitStunFrames--;
         }
 
-        if (grounded && !launched && !attacking && !hitStun)
+        else if (grounded && !launched && !attacking && !hitStun)
         {
             rb2d.velocity = new Vector2(move * moveSpeed * Time.fixedDeltaTime, 0);
             animator.SetBool("isJumping", false);
@@ -81,12 +83,17 @@ public class playerController_V3 : MonoBehaviour
                 animator.SetBool("isRunning", true);
             else
                 animator.SetBool("isRunning", false);
+
+            if (jump)
+            {
+                rb2d.AddForce(new Vector2(0, jumpForce));
+            }
         }
 
         // if the player is not grounded, launched, or attacking
-        if (!grounded && !launched && !attacking && !hitStun)
+        else if (!grounded && !launched && !attacking && !hitStun)
         {
-            if (rb2d.velocity.x < Mathf.Abs(maxAirSpeed))
+            if (Mathf.Abs(rb2d.velocity.x) < maxAirSpeed)
             {
                 rb2d.AddForce(new Vector2(move * (moveSpeed * 2f) * Time.fixedDeltaTime, 0));
             }
@@ -96,53 +103,51 @@ public class playerController_V3 : MonoBehaviour
             }
 
             if (rb2d.velocity.y <= 0)
-                rb2d.gravityScale = gravityScale * 2f;
+                rb2d.gravityScale = gravityScale + 1 * 2f;
             if (rb2d.velocity.y > 0)
-                rb2d.gravityScale = gravityScale;
+                rb2d.gravityScale = gravityScale + 1;
 
             animator.SetBool("isJumping", true);
         }
 
-        // if the player presses the jump key and is not launched or attacking
-        if (grounded && jump && !launched && !attacking)
-        {
-            rb2d.velocity = new Vector2(rb2d.velocity.x / 2, 0);
-            rb2d.AddForce(new Vector2(0, jumpForce));
-
-        }
-
         // if the player presses the attack key on the ground
 
-        if (attacking && !launched)
+        else if (attacking && !launched)
         {
+            float startTime = Time.time;
             if (grounded)
             {
-                if (move == 0 && !(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
+                if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 0 && !(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
                 {
-                    // neutral attack ground
-                    // instantiate the hitbox prefab
-                    // tell the animator what the player is doing
+                    
+                    StartCoroutine(NeutralGround());
+                    
                 }
-                if (Mathf.Abs(move) > 0 && !(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
+                else if (Mathf.Abs(move) > 0 && !(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
                 {
                     // side attack ground
                     // instantiate the hitbox prefab
+                    for (float i = 0; i < startTime; i += .1f)
+                    {
+                        rb2d.velocity = new Vector2(2.5f * Input.GetAxisRaw("Horizontal"), 0);
+                    }
                     // tell the animator what the player is doing
+                    animator.SetBool("isDashAttacking", true);
                 }
-                if (Input.GetKey(KeyCode.S))
+                else if (Input.GetKey(KeyCode.S))
                 {
                     // down attack ground
                     // instantiate the hitbox prefab
                     // tell the animator what the player is doing
                 }
-                if (Input.GetKey(KeyCode.W))
+                else if (Input.GetKey(KeyCode.W))
                 {
                     // up attack ground
                     // instantiate the hitbox prefab
                     // tell the animator what the player is doing
                 }
             }
-            if (!grounded)
+            else if (!grounded)
             {
                 if (move == 0 && !(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
                 {
@@ -169,6 +174,10 @@ public class playerController_V3 : MonoBehaviour
                     // tell the animator what the player is doing
                 }
             }
+        }
+        if (!attacking)
+        {
+            animator.SetBool("isAttacking", false);
         }
 
         if (launched)
@@ -197,7 +206,22 @@ public class playerController_V3 : MonoBehaviour
 
         transform.Rotate(0f, 180f, 0f);
     }
+
+    public IEnumerator NeutralGround()
+    {
+        rb2d.velocity = new Vector2(0, 0);
+        animator.SetBool("isAttacking", true);
+        yield return new WaitForSecondsRealtime(.15f);
+        Instantiate(neutralLight, cleetusCenter);
+    }
+
+    private object WaitForSecondsRealtime(float time)
+    {
+        throw new NotImplementedException();
+    }
 }
+
+
 
 // You're still here?
 
@@ -205,5 +229,5 @@ public class playerController_V3 : MonoBehaviour
 
 // Go home.
 
-// Go
+// Go.
 
