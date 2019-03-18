@@ -239,7 +239,6 @@ GameObject:
   - component: {fileID: 1588918451}
   - component: {fileID: 1588918453}
   - component: {fileID: 1588918458}
-  - component: {fileID: 1588918455}
   m_Layer: 0
   m_Name: CleetusBaseSprite
   m_TagString: Untagged
@@ -322,7 +321,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1588918447}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.36, y: 2.87, z: 0}
+  m_LocalPosition: {x: -2.3, y: 0.02, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 1729881512}
@@ -393,34 +392,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &1588918455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1588918447}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 143bd66e6d1eefb4ca66cd9922f2d146, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb2d: {fileID: 1588918453}
-  animator: {fileID: 1588918448}
-  grounded: 0
-  hit: 0
-  launched: 0
-  attacking: 0
-  jumping: 0
-  numJumps: 0
-  hitstunFrames: 150
-  movesSpeed: 300
-  jumpForce: 200
-  maxAirSpeed: 5
-  gravityScale: 0
-  damagePercent: 0
-  groundCheck: {fileID: 1729881512}
-  movement: {x: 0, y: 0}
 --- !u!114 &1588918458
 MonoBehaviour:
   m_ObjectHideFlags: 0
