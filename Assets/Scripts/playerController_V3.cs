@@ -121,7 +121,7 @@ public class playerController_V3 : MonoBehaviour
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 0 && !(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)))
                 {
                     
-                    // 
+                    // neutral ground attack
                     StartCoroutine(NeutralGround());
                     
                 }
@@ -129,6 +129,8 @@ public class playerController_V3 : MonoBehaviour
                 {
 
                     // side attack ground
+                    rb2d.velocity = new Vector2(5 * Input.GetAxisRaw("Horizontal"), 0);
+
                     StartCoroutine(SideGround());
                     
                 }
@@ -170,6 +172,7 @@ public class playerController_V3 : MonoBehaviour
         if (!attacking)
         {
             animator.SetBool("isAttacking", false);
+            //animator.SetBool("isSideLight", false);
         }
 
         if (launched)
@@ -213,51 +216,60 @@ public class playerController_V3 : MonoBehaviour
     public IEnumerator SideGround()
     {
         canMove = false;
-        rb2d.velocity = new Vector2(0, 0);
+        animator.SetBool("isSideLight", true);
         yield return new WaitForSecondsRealtime(.15f);
         //Instantiate(SideGround, cleetusCenter);
         yield return new WaitForSecondsRealtime(.15f);
+        animator.SetBool("isSideLight", false);
         canMove = true;
     }
 
     public IEnumerator DownGround()
     {
         canMove = false;
+        animator.SetBool("isDownGround", true);
         rb2d.velocity = new Vector2(0, 0);
         yield return new WaitForSecondsRealtime(1);
         //Instantiate(DownGround, cleetusCenter);
         yield return new WaitForSecondsRealtime(.15f);
+        animator.SetBool("isDownGround", false);
         canMove = true;
     }
 
     public IEnumerator UpGround()
     {
         canMove = false;
+        animator.SetBool("isUpGround", true);
         rb2d.velocity = new Vector2(0, 0);
         yield return new WaitForSecondsRealtime(1);
         //Instantiate(UpGround, cleetusCenter);
         yield return new WaitForSecondsRealtime(.15f);
+        animator.SetBool("isUpGround", false);
         canMove = true;
     }
 
     // moving in air attacks is fine, just not during ground attacks
     public IEnumerator NeutralAir()
     {
+        // player can move during in air attacking
         yield return new WaitForSecondsRealtime(1);
     }
 
     public IEnumerator SideAir()
     {
+        // player can move during in air attacking
         yield return new WaitForSecondsRealtime(1);
     }
 
     public IEnumerator DownAir()
     {
+        // player can move during in air attacking
         yield return new WaitForSecondsRealtime(1);
     }
 
     public IEnumerator UpAir()
     {
+        // player can move during in air attacking
         yield return new WaitForSecondsRealtime(1);
     }
     
