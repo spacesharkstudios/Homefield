@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-public class playerController_V3 : MonoBehaviour
+public class playerController_V3_P2 : MonoBehaviour
 {
     public Rigidbody2D rb2d;
     public Animator animator;
@@ -51,10 +51,21 @@ public class playerController_V3 : MonoBehaviour
 
             }
         }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            move = 1.0f;
+        }
+        else if(Input.GetKey(KeyCode.LeftArrow))
+        {
+            move = -1.0f;
+        }
+        else
+        {
+            move = 0.0f;
+        }
+        
 
-        move = Input.GetAxis("Horizontal");
-
-        Move(move, 0, grounded, Input.GetKey(KeyCode.P), false, Input.GetKey(KeyCode.Space));
+        Move(move, 0, grounded, Input.GetKey(KeyCode.P), false, Input.GetKey(KeyCode.UpArrow));
     }
 
     private void Move(float move, int hitStunFrames, bool grounded, bool attacking, bool launched, bool jump)
@@ -85,7 +96,7 @@ public class playerController_V3 : MonoBehaviour
             }
             if (rb2d.velocity.x >= Mathf.Abs(maxAirSpeed))
             {
-                rb2d.velocity = new Vector2(maxAirSpeed - .01f * (rb2d.velocity.x/(Mathf.Abs(rb2d.velocity.x))), rb2d.velocity.y);
+                rb2d.velocity = new Vector2(maxAirSpeed - .01f * (rb2d.velocity.x / (Mathf.Abs(rb2d.velocity.x))), rb2d.velocity.y);
             }
 
             if (rb2d.velocity.y <= 0)
@@ -199,4 +210,3 @@ public class playerController_V3 : MonoBehaviour
 // Go home.
 
 // Go
-
